@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+    webserver:
+        image: nginx:1.15.2-alpine
+        working_dir: /var/www
+        volumes:
+            - ./config/vhost.conf:/etc/nginx/conf.d/default.conf
+            - user
+        ports:
+            - 80:80
+
+    rest-api:
+        build: ./rest-api
+        working_dir: /var/www
+        volumes:
+            - ./rest-api:/var/www
+        environment:
+            - DB_PORT:3306
+            - DB_HOST:database
+
+    database:
+        image: mysql:5.7
+        volumes:
+            - dbdata:/var/lib/mysql
+        environment:
+            - MYSQL_DATABASE=trible
+            - MYSQL_USER=trible
+            - MYSQL_PASSWORD=trible
+            - MYSQL_ROOT_PASSWORD=root
+        ports:
+            - 33061:3306
+
+volumes:
+    dbdata:
