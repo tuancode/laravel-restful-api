@@ -32,7 +32,7 @@ ENV PECL_EXTS \
     xdebug
 
 RUN apk add --update --no-cache --virtual .build-deps ${PHPIZE_DEPS} \
-    && apk add --update --no-cache ${EXT_DEPS} \
+    && apk add --update --no-cache git bash vim ${EXT_DEPS} \
     # Install PHP Core Extensions
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install ${PHP_EXTS} \

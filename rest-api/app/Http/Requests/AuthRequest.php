@@ -1,13 +1,13 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * UserRequest
+ * AuthRequest
  */
-class UserRequest extends FormRequest
+class AuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,7 +16,7 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -27,9 +27,10 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:127,name',
-            'email' => 'required|email|max:127|unique:users,email',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required',
+            'c_password' => 'required|same:password',
         ];
     }
 }

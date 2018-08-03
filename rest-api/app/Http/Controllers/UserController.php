@@ -1,105 +1,130 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use OpenApi\Annotations as OA;
 
+/**
+ * UserController
+ */
 class UserController extends Controller
 {
     /**
-     * @var Request
+     * Retrieves the collection of User resources
+     *
+     * @OA\Get(
+     *     path="/api/v1/users",
+     *     tags={"User"},
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *     description="Retrieves the collection of User resources",
+     *     operationId="findUsers",
+     *     @OA\Response(
+     *         response=200,
+     *         description="User collection response",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 ref="#/components/schemas/User"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     )
+     * )
+     *
+     * @return JsonResponse
      */
-    protected $request;
-
-    /**
-     * @var User
-     */
-    protected $user;
-
-    /**
-     * @param Request $request
-     * @param User    $user
-     */
-    public function __construct(Request $request, User $user)
+    public function index(): JsonResponse
     {
-        $this->request = $request;
-        $this->user = $user;
+        $users = User::all();
+
+        return response()->json($users);
     }
 
     /**
-     * Display a listing of the resource.
+     * Create a newly created user in application.
      *
-     * @return \Illuminate\Http\Response
+     * @param UserRequest $request
+     *
+     * @return JsonResponse
      */
-    public function index()
+    public function store(UserRequest $request): JsonResponse
     {
-        //
-    }
+        $user = User::create($request->all());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        return response()->json($user, Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  User  $user
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show(User $user): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json($user);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param UserRequest $request
+     * @param User        $user
+     *
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, User $user): JsonResponse
     {
-        //
+        $input = $request->all();
+
+        $user->setName($input['name']);
+        $user->setEmail($input['email']);
+        $user->setPassword($input['password']);
+        $user->save();
+
+        return response()->json($user);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the User resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @OA\Delete(
+     *     path="/api/v1/users/{id}",
+     *     tags={"User"},
+     *     summary="Remove the User resource.",
+     *     description="This can only be done by the logged in user.",
+     *     operationId="deleteUser",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="The user id needs to be deleted",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *   ),
+     *     @OA\Response(response=404, description="User not found")
+     * )
+     *
+     *
+     * @param User $user
+     *
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(User $user): JsonResponse
     {
-        //
+        $user->delete();
+
+        return response()->json($user, Response::HTTP_NO_CONTENT);
     }
 }
