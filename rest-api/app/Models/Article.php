@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
+    use Uuids;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -19,6 +22,13 @@ class Article extends Model
      * @var array
      */
     protected $hidden = ['author_id'];
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -31,4 +31,16 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::refreshTokensExpireIn(now()->addDays(15));
     }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        Passport::ignoreMigrations();
+    }
 }

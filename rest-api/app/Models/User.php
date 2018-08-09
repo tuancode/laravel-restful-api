@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
+use App\Models\Traits\Uuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use OpenApi\Annotations as OA;
 
@@ -36,7 +37,7 @@ use OpenApi\Annotations as OA;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, Uuids;
 
     /**
      * @var array
@@ -49,4 +50,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
 }
