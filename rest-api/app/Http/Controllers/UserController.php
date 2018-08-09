@@ -105,10 +105,9 @@ class UserController extends Controller
      *         in="path",
      *         description="The user id needs to be deleted",
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *   ),
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=204, description="Successful delete User resource"),
      *     @OA\Response(response=404, description="User not found")
      * )
      *
