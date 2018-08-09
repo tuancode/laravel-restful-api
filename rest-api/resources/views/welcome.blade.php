@@ -68,7 +68,7 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    Welcome to Trible API
+                    Welcome to Tribe API
                 </div>
 
                 <div class="links">

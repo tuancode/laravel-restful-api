@@ -8,7 +8,7 @@ return [
         |--------------------------------------------------------------------------
         */
 
-        'title' => 'Trible API Documentation',
+        'title' => 'Tribe API Documentation',
     ],
 
     'routes' => [

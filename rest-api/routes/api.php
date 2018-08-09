@@ -11,12 +11,40 @@
 |
 */
 
-Route::get('login', 'Auth\LoginController@login')->name('login');
-Route::post('register', 'AuthController@register')->name('register');
+Route::post('register', 'AuthController@register');
 
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('products', 'ProductController');
-    Route::apiResource('users', 'UserController', [
-        'where' => ['id' => '\d+']
-    ]);
+    Route::apiResource('users', 'UserController');
+    Route::apiResource('articles', 'ArticleController');
+    Route::apiResource('authors', 'AuthorController');
+    Route::apiResource('comments', 'CommentController');
 });
+
+Route::get(
+    'articles/{article}/relationships/author',
+    [
+        'uses' => 'ArticleRelationshipController@author',
+        'as' => 'articles.relationships.author',
+    ]
+);
+Route::get(
+    'articles/{article}/author',
+    [
+        'uses' => 'ArticleRelationshipController@author',
+        'as' => 'articles.author',
+    ]
+);
+Route::get(
+    'articles/{article}/relationships/comments',
+    [
+        'uses' => 'ArticleRelationshipController@comments',
+        'as' => 'articles.relationships.comments',
+    ]
+);
+Route::get(
+    'articles/{article}/comments',
+    [
+        'uses' => 'ArticleRelationshipController@comments',
+        'as' => 'articles.comments',
+    ]
+);

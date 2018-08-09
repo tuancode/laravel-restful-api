@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
-use App\User;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
@@ -40,13 +41,11 @@ class UserController extends Controller
      *     )
      * )
      *
-     * @return JsonResponse
+     * @return Collection
      */
-    public function index(): JsonResponse
+    public function index(): Collection
     {
-        $users = User::all();
-
-        return response()->json($users);
+        return User::all();
     }
 
     /**
@@ -54,24 +53,22 @@ class UserController extends Controller
      *
      * @param UserRequest $request
      *
-     * @return JsonResponse
+     * @return User
      */
-    public function store(UserRequest $request): JsonResponse
+    public function store(UserRequest $request): User
     {
-        $user = User::create($request->all());
-
-        return response()->json($user, Response::HTTP_CREATED);
+        return User::create($request->all());
     }
 
     /**
      * Display the specified resource.
      *
      * @param  User  $user
-     * @return JsonResponse
+     * @return User
      */
-    public function show(User $user): JsonResponse
+    public function show(User $user): User
     {
-        return response()->json($user);
+        return $user;
     }
 
     /**
@@ -80,9 +77,9 @@ class UserController extends Controller
      * @param UserRequest $request
      * @param User        $user
      *
-     * @return JsonResponse
+     * @return User
      */
-    public function update(UserRequest $request, User $user): JsonResponse
+    public function update(UserRequest $request, User $user): User
     {
         $input = $request->all();
 
@@ -91,7 +88,7 @@ class UserController extends Controller
         $user->setPassword($input['password']);
         $user->save();
 
-        return response()->json($user);
+        return $user;
     }
 
     /**
@@ -115,7 +112,6 @@ class UserController extends Controller
      *     @OA\Response(response=404, description="User not found")
      * )
      *
-     *
      * @param User $user
      *
      * @return JsonResponse
@@ -125,6 +121,6 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return response()->json($user, Response::HTTP_NO_CONTENT);
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

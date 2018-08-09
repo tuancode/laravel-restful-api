@@ -11,9 +11,9 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
- *     title="Trible API",
+ *     title="Tribe API",
  *     version="1.0",
- *     description="Trible API Demo"
+ *     description="Tribe API Demo"
  * )
  *
  * @OA\SecurityScheme(
