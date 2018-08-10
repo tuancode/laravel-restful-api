@@ -9,8 +9,10 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
+        factory(\App\Models\User::class, 1)->create();
+
         factory(\App\Models\Article::class)
             ->create()
             ->each(function (\App\Models\Article $article) {

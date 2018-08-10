@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Traits\Uuids;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Laravel\Passport\HasApiTokens;
 use OpenApi\Annotations as OA;
 
@@ -35,9 +34,9 @@ use OpenApi\Annotations as OA;
  *     title="Email"
  * )
  */
-class User extends Authenticatable
+class User extends Model implements AuthenticatableContract
 {
-    use HasApiTokens, Notifiable, Uuids;
+    use HasApiTokens, Authenticatable;
 
     /**
      * @var array
@@ -50,11 +49,4 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 }

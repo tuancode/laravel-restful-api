@@ -1,14 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Traits\Uuids;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Article extends Model
 {
-    use Uuids;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -24,16 +22,9 @@ class Article extends Model
     protected $hidden = ['author_id'];
 
     /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function author()
+    public function author(): BelongsTo
     {
         return $this->belongsTo(People::class);
     }
@@ -43,7 +34,7 @@ class Article extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
