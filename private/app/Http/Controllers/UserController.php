@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 
@@ -42,11 +45,11 @@ class UserController extends Controller
      *     )
      * )
      *
-     * @return Collection
+     * @return UserCollection
      */
-    public function index(): Collection
+    public function index(): UserCollection
     {
-        return User::all();
+        return new UserCollection(User::paginate());
     }
 
     /**
@@ -126,12 +129,12 @@ class UserController extends Controller
      *     @OA\Response(response=404, description="Resource not found")
      * )
      *
-     * @param  User  $user
-     * @return User
+     * @param  string  $id
+     * @return UserResource
      */
-    public function show(User $user): User
+    public function show(string $id): UserResource
     {
-        return $user;
+        return new UserResource(User::findOrFail(explode(',', $id)));
     }
 
     /**

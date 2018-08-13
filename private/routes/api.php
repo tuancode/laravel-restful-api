@@ -11,7 +11,7 @@
 |
 */
 
-Route::post('register', 'AuthController@register');
+Route::post('registers', 'AuthController@register');
 
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('users', 'UserController');
