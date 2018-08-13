@@ -11,11 +11,11 @@ services:
         ports:
             - 80:80
 
-    rest-api:
-        build: ./rest-api
+    private:
+        build: ./private
         working_dir: /var/www
         volumes:
-            - ./rest-api:/var/www
+            - ./private:/var/www
         environment:
             - DB_PORT:3306
             - DB_HOST:database
@@ -25,9 +25,9 @@ services:
         volumes:
             - dbdata:/var/lib/mysql
         environment:
-            - MYSQL_DATABASE=trible
-            - MYSQL_USER=trible
-            - MYSQL_PASSWORD=trible
+            - MYSQL_DATABASE=tribe
+            - MYSQL_USER=tribe
+            - MYSQL_PASSWORD=tribe
             - MYSQL_ROOT_PASSWORD=root
         ports:
             - 33061:3306

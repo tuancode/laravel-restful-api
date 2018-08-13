@@ -88,7 +88,7 @@ window.onload = function() {
 
     presets: [
       SwaggerUIBundle.presets.apis,
-      SwaggerUIStandalonePreset
+      SwaggerUIStandalonePreset.slice(1)
     ],
 
     plugins: [
