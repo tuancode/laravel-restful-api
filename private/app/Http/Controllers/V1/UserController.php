@@ -1,33 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\User\IndexRequest;
+use App\Http\Requests\User\PopulateRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 
-/**
- * UserController
- */
 class UserController extends Controller
 {
     /**
      * Retrieves the collection of User resources.
      *
      * @OA\Get(
-     *     path="/v1/users",
+     *     path="/users",
      *     tags={"User"},
+     *     description="This can only be done by the logged in user.",
+     *     operationId="indexUsers",
      *     security={
      *         {"passport": {}},
      *     },
-     *     description="This can only be done by the logged in user.",
-     *     operationId="indexUsers",
+     *     @OA\Parameter(name="sort", in="query", description="Use commas for multiple, minus (-) for descending order", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="page[number]", in="query", description="Current page number", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="page[size]", in="query", description="Limit item per page", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="filter[name]", in="query", description="Filter by name", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="filter[email]", in="query", description="Filter by email", @OA\Schema(type="string")),
      *     @OA\Response(
      *         response=200,
      *         description="User collection response",
@@ -45,35 +47,31 @@ class UserController extends Controller
      *     )
      * )
      *
+     * @param IndexRequest $request
+     * @param User         $user
+     *
      * @return UserCollection
      */
-    public function index(): UserCollection
+    public function index(IndexRequest $request, User $user): UserCollection
     {
-        return new UserCollection(User::paginate());
+        $sort = $request->query->get('sort');
+        $page = $request->query->get('page', []);
+        $filter = $request->query->get('filter', []);
+
+        return new UserCollection($user->search($sort, $page, $filter));
     }
 
     /**
      * Creates a User resource.
      *
      * @OA\Post(
-     *     path="/v1/users",
+     *     path="/users",
      *     tags={"User"},
+     *     description="This can only be done by the logged in user.",
+     *     operationId="storeUser",
      *     security={
      *         {"passport": {}},
      *     },
-     *     description="This can only be done by the logged in user.",
-     *     operationId="storeUser",
-     *     @OA\Response(
-     *         response=201,
-     *         description="User resource created",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 ref="#/components/schemas/User"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=422, description="Invalid input"),
      *     @OA\RequestBody(
      *         description="Register a new User resource",
      *         required=true,
@@ -85,23 +83,34 @@ class UserController extends Controller
      *                 @OA\Property(property="password", type="string", example="my-password"),
      *             )
      *         )
-     *     )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User resource created",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 ref="#/components/schemas/User"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Invalid input")
      * )
      *
-     * @param UserRequest $request
+     * @param PopulateRequest $request
      *
-     * @return User
+     * @return UserResource
      */
-    public function store(UserRequest $request): User
+    public function store(PopulateRequest $request): UserResource
     {
-        return User::create($request->all());
+        return new UserResource(User::create($request->all()));
     }
 
     /**
      * Retrieves a User resource.
      *
      * @OA\Get(
-     *     path="/v1/users/{id}",
+     *     path="/users/{id}",
      *     tags={"User"},
      *     security={
      *         {"passport": {}},
@@ -130,6 +139,7 @@ class UserController extends Controller
      * )
      *
      * @param  string  $id
+     *
      * @return UserResource
      */
     public function show(string $id): UserResource
@@ -141,13 +151,13 @@ class UserController extends Controller
      * Replaces the User resource.
      *
      * @OA\Put(
-     *     path="/v1/users/{id}",
+     *     path="/users/{id}",
      *     tags={"User"},
+     *     description="This can only be done by the logged in user.",
+     *     operationId="updateUser",
      *     security={
      *         {"passport": {}},
      *     },
-     *     description="This can only be done by the logged in user.",
-     *     operationId="updateUser",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -181,12 +191,12 @@ class UserController extends Controller
      *     )
      * )
      *
-     * @param UserRequest $request
-     * @param User        $user
+     * @param PopulateRequest $request
+     * @param User            $user
      *
-     * @return User
+     * @return UserResource
      */
-    public function update(UserRequest $request, User $user): User
+    public function update(PopulateRequest $request, User $user): UserResource
     {
         $input = $request->all();
 
@@ -195,28 +205,22 @@ class UserController extends Controller
         $user->password = $input['password'];
         $user->save();
 
-        return $user;
+        return new UserResource($user);
     }
 
     /**
      * Removes the User resource.
      *
      * @OA\Delete(
-     *     path="/v1/users/{id}",
+     *     path="/users/{id}",
      *     tags={"User"},
-     *     security={
-     *         {"passport": {}},
-     *     },
      *     summary="Removes the User resource.",
      *     description="This can only be done by the logged in user.",
      *     operationId="destroyUser",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="UUID",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
+     *     security={
+     *         {"passport": {}},
+     *     },
+     *     @OA\Parameter(name="id", in="path", description="UUID", required=true, @OA\Schema(type="string")),
      *     @OA\Response(response=204, description="Successful delete User resource"),
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=404, description="Resource not found")

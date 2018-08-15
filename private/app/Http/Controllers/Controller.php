@@ -13,12 +13,16 @@ use OpenApi\Annotations as OA;
  * @OA\Info(
  *     title="Tribe API",
  *     version="1.0",
- *     description="Tribe API Demo"
+ *     description="The private api of Tribe system"
+ * )
+ *
+ * @OA\Server(
+ *     url="/v1",
  * )
  *
  * @OA\SecurityScheme(
  *     type="oauth2",
- *     securityScheme="passport",
+ *     securityScheme="passport"
  * )
  */
 class Controller extends BaseController
